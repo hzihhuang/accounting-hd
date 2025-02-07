@@ -6,23 +6,30 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class BillsService {
-
   constructor(
     @InjectRepository(Bill)
     private readonly billsRepository: Repository<Bill>,
-  ) { }
+  ) {}
 
   create(userId: number, createBillDto: CreateBillDto) {
-    const bill = this.billsRepository.create({ ...createBillDto, user: { id: userId } });
+    const bill = this.billsRepository.create({
+      ...createBillDto,
+      user: { id: userId },
+    });
     return this.billsRepository.save(bill);
   }
 
   async findAll(userId: number) {
-    return this.billsRepository.find({ where: { user: { id: userId } }, order: { createdAt: 'DESC' } });
+    return this.billsRepository.find({
+      where: { user: { id: userId } },
+      order: { createdAt: 'DESC' },
+    });
   }
 
   async remove(userId: number, billId: number) {
-    const bill = await this.billsRepository.findOne({ where: { id: billId, user: { id: userId } } });
+    const bill = await this.billsRepository.findOne({
+      where: { id: billId, user: { id: userId } },
+    });
     if (!bill) {
       throw new NotFoundException('账单不存在或无权限删除');
     }

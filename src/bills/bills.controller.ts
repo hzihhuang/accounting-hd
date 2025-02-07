@@ -1,10 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  Request,
+} from '@nestjs/common';
 import { BillsService } from './bills.service';
 import { CreateBillDto } from './dto/create-bill.dto';
 
 @Controller('bills')
 export class BillsController {
-  constructor(private readonly billsService: BillsService) { }
+  constructor(private readonly billsService: BillsService) {}
 
   @Post()
   async create(@Request() req, @Body() createBillDto: CreateBillDto) {
@@ -23,7 +33,11 @@ export class BillsController {
 
   // 统计
   @Get('statistics')
-  async getStatistics(@Request() req, @Query('start') start: string, @Query('end') end: string) {
+  async getStatistics(
+    @Request() req,
+    @Query('start') start: string,
+    @Query('end') end: string,
+  ) {
     return this.billsService.getStatistics(req.session.user.id, start, end);
   }
 }

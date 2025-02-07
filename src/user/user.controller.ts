@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
   @Post('register')
   // 定义一个异步的注册方法，接收请求体、会话和响应对象作为参数

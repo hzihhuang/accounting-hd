@@ -10,7 +10,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) { }
+  ) {}
 
   // 定义一个异步方法 register，用于注册新用户
   async register(createUserDto: CreateUserDto) {
@@ -18,7 +18,9 @@ export class UserService {
     const { password, username } = createUserDto;
 
     // 1️⃣ 先检查用户是否已存在
-    const existingUser = await this.userRepository.findOne({ where: { username } });
+    const existingUser = await this.userRepository.findOne({
+      where: { username },
+    });
     if (existingUser) {
       throw new BadRequestException('用户已存在'); // 返回 400 错误
     }

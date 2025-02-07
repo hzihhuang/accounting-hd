@@ -1,10 +1,13 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-
   private readonly whiteList = ['/user/login', '/user/register']; // 白名单
-
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
