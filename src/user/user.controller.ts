@@ -5,6 +5,16 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
+  @Post('register')
+  // 定义一个异步的注册方法，接收请求体、会话和响应对象作为参数
+  async register(@Body() body, @Session() session, @Res() res) {
+    if (!body) return res.status(400).send({ message: '请求参数错误' });
+    const { username, password } = body;
+    await this.userService.register({ username, password });
+    // 如果用户注册成功
+    return res.status(200).send({ message: 'User registered successfully' });
+  }
+
   @Post('login')
   async login(@Body() body, @Session() session, @Res() res) {
     const { username, password } = body;
