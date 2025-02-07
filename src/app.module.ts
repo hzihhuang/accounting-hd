@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
+import { AppController } from '@/app.controller';
+import { AppService } from '@/app.service';
+import { UserModule } from '@/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './user/entities/user.entity';
+import { User } from '@/user/entities/user.entity';
+import { BillsModule } from '@/bills/bills.module';
+import { Bill } from '@/bills/entities/bill.entity';
 
 @Module({
   imports: [
@@ -14,10 +16,11 @@ import { User } from './user/entities/user.entity';
       username: 'root', // 你的数据库用户名
       password: 'hzh0914', // 你的数据库密码
       database: 'accounting', // 你的数据库名
-      entities: [User],
+      entities: [User, Bill],
       synchronize: true, // 自动同步数据库（开发环境可用，生产环境请关闭）
     }),
     UserModule,
+    BillsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
