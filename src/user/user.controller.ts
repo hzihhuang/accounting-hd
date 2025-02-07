@@ -21,19 +21,10 @@ export class UserController {
     const user = await this.userService.validateUser({ username, password });
 
     if (!user) {
-      return res.status(401).send({ message: '邮箱或密码错误' });
+      return res.status(401).send({ message: '用户或密码错误' });
     }
-
     session.user = { id: user.id, username: user.username };
     return res.send({ message: '登录成功', user: session.user });
-  }
-
-  @Post('me')
-  async getProfile(@Session() session, @Res() res) {
-    if (!session.user) {
-      return res.status(401).send({ message: '未登录' });
-    }
-    return res.send({ user: session.user });
   }
 
   @Post('logout')
