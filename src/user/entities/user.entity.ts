@@ -8,7 +8,7 @@ import {
   OneToMany,
 } from 'typeorm';
 
-@Entity('users') // 指定表名为 "users"
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -19,8 +19,17 @@ export class User {
   @Column()
   password: string;
 
+  @Column({ length: 100, nullable: true }) // 允许为空
+  nickname: string;
+
+  @Column({ unique: true, nullable: true })
+  email: string;
+
+  @Column({ nullable: true })
+  avatar: string; // 头像 URL
+
   @OneToMany(() => Bill, (bill) => bill.user)
-  bills: Bill[]; // 关联账单（一个用户可以有多个账单）
+  bills: Bill[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
