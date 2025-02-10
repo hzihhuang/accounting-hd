@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Query,
@@ -14,21 +13,21 @@ import { CreateBillDto } from './dto/create-bill.dto';
 
 @Controller('bills')
 export class BillsController {
-  constructor(private readonly billsService: BillsService) {}
+  constructor(private readonly billsService: BillsService) { }
 
   @Post()
   async create(@Request() req, @Body() createBillDto: CreateBillDto) {
-    return this.billsService.create(req.session.user.id, createBillDto);
+    return this.billsService.create(1, createBillDto);
   }
 
   @Get()
   async findAll(@Request() req) {
-    return this.billsService.findAll(req.session.user.id);
+    return this.billsService.findAll(1);
   }
 
   @Delete(':id')
   async remove(@Request() req, @Param('id') id: number) {
-    return this.billsService.remove(req.session.user.id, id);
+    return this.billsService.remove(1, id);
   }
 
   // 统计
@@ -38,6 +37,6 @@ export class BillsController {
     @Query('start') start: string,
     @Query('end') end: string,
   ) {
-    return this.billsService.getStatistics(req.session.user.id, start, end);
+    return this.billsService.getStatistics(1, start, end);
   }
 }
