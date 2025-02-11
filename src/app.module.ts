@@ -9,6 +9,8 @@ import { Bill } from '@/bills/entities/bill.entity';
 import { AuthModule } from '@/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
+import { TagsModule } from '@/tags/tags.module';
+import { Tag } from '@/tags/entities/tag.entity';
 
 @Module({
   imports: [
@@ -19,12 +21,13 @@ import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
       username: 'root', // 你的数据库用户名
       password: 'hzh0914', // 你的数据库密码
       database: 'accounting', // 你的数据库名
-      entities: [User, Bill],
+      entities: [User, Bill, Tag],
       synchronize: true, // 自动同步数据库（开发环境可用，生产环境请关闭）
     }),
     UserModule,
     BillsModule,
     AuthModule,
+    TagsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
