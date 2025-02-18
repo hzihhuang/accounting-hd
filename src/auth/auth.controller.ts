@@ -1,6 +1,7 @@
 import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { Public } from '@/decorators/public.decorator';
 import { AuthService } from './auth.service';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -8,12 +9,12 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  async register(@Body() body, @Res() res) {
+  async register(@Body() body, @Res() res: Response) {
     if (!body) return res.status(400).send({ message: '请求参数错误' });
     const { username, password } = body;
     const user = await this.authService.register({ username, password });
     // 如果用户注册成功
-    return res.status(200).send({ message: '注册成功', user });
+    return res.send({ message: '注册成功', user });
   }
 
   @Public()
@@ -22,7 +23,7 @@ export class AuthController {
     const { username, password } = body;
     const user = await this.authService.validateUser({ username, password });
     if (!user) {
-      return res.status(401).send({ message: '用户或密码错误' });
+      return res.status(400).send({ message: '用户或密码错误' });
     }
     const token = await this.authService.generateToken(user);
     return res.send({ message: '登录成功', token });
