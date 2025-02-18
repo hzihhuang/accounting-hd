@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Request } from '@nestjs/common';
 import { TagsService } from './tags.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { GetUser } from '@/decorators/getUser.decorator';
@@ -15,5 +15,10 @@ export class TagsController {
   @Post()
   async create(@Body() createTagDto: CreateTagDto, @GetUser('userId') userId) {
     return this.tagsService.create(createTagDto, userId);
+  }
+
+  @Delete(':id')
+  async remove(@Request() req, @GetUser('userId') userId) {
+    return this.tagsService.remove(req.params.id, userId);
   }
 }

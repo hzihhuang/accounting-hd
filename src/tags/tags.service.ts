@@ -38,4 +38,11 @@ export class TagsService {
       expenseTags
     }
   }
+
+  async remove(id: number, userId: number) {
+    return await this.tagRepository.delete({
+      id,
+      createdBy: { id: userId }
+    });
+  }
 }
