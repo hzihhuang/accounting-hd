@@ -1,4 +1,4 @@
-import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Controller, Post, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { extname } from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -24,24 +24,22 @@ export class UploadController {
     },
     fileFilter: (req, file, callback) => {
       // 允许的文件类型
-      const allowedMimeTypes = [
-        'image/jpg',
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-        'image/webp',
-      ];
+      const allowedMimeTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'image/webp'];
       if (allowedMimeTypes.includes(file.mimetype)) {
         callback(null, true);
       } else {
-        callback(new Error('只允许上传图片文件'), false);
+        callback(new BadRequestException('仅支持上传 JPG、JPEG、PNG、GIF 和 WEBP 格式的图片'), false);
       }
     },
   }))
-  uploadFile(@UploadedFile() file) {
+  uploadFile(@UploadedFile() file, @Req() req) {
+    if (!file) {
+      throw new BadRequestException('未检测到有效的图片文件');
+    }
+    const host = req.protocol + '://' + req.get('host');
     return {
       filename: file.filename,
-      url: `/images/${file.filename}`, // 返回可访问 URL
+      url: `${host}/images/${file.filename}`, // 返回可访问 URL
     };
   }
 }
