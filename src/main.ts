@@ -14,6 +14,7 @@ async function bootstrap() {
     }),
   );
 
+  // 跨域
   app.enableCors({
     origin: true,
     credentials: true,

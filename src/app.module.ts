@@ -11,6 +11,9 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 import { TagsModule } from '@/tags/tags.module';
 import { Tag } from '@/tags/entities/tag.entity';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -24,10 +27,15 @@ import { Tag } from '@/tags/entities/tag.entity';
       entities: [User, Bill, Tag],
       synchronize: true, // 自动同步数据库（开发环境可用，生产环境请关闭）
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public/images'), // 指定存储图片的目录
+      serveRoot: '/images', // 访问 URL 前缀
+    }),
     UserModule,
     BillsModule,
     AuthModule,
     TagsModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
