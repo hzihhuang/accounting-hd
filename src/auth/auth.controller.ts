@@ -2,6 +2,7 @@ import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { Public } from '@/decorators/public.decorator';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
+import { CreateUserDto } from '@/user/dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -9,10 +10,9 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  async register(@Body() body, @Res() res: Response) {
+  async register(@Body() body: CreateUserDto, @Res() res: Response) {
     if (!body) return res.status(400).send({ message: '请求参数错误' });
-    const { username, password } = body;
-    const user = await this.authService.register({ username, password });
+    const user = await this.authService.register(body);
     // 如果用户注册成功
     return res.send({ message: '注册成功', user });
   }
