@@ -9,11 +9,15 @@ export class BillsService {
   constructor(
     @InjectRepository(Bill)
     private readonly billsRepository: Repository<Bill>,
-  ) {}
+  ) { }
 
   create(userId: number, createBillDto: CreateBillDto) {
+    const { type, amount, tagId, note } = createBillDto;
     const bill = this.billsRepository.create({
-      ...createBillDto,
+      type,
+      amount,
+      note,
+      tag: { id: tagId },
       user: { id: userId },
     });
     return this.billsRepository.save(bill);

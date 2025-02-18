@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { BillsService } from './bills.service';
 import { CreateBillDto } from './dto/create-bill.dto';
+import { GetUser } from '@/decorators/getUser.decorator';
 
 @Controller('bills')
 export class BillsController {
@@ -33,10 +34,10 @@ export class BillsController {
   // 统计
   @Get('statistics')
   async getStatistics(
-    @Request() req,
+    @GetUser("userId") userId: number,
     @Query('start') start: string,
     @Query('end') end: string,
   ) {
-    return this.billsService.getStatistics(1, start, end);
+    return this.billsService.getStatistics(userId, start, end);
   }
 }

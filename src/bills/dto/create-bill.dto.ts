@@ -20,12 +20,9 @@ export class CreateBillDto {
   @Min(0, { message: '金额不能小于 0' })
   amount: number; // 金额
 
-  @IsString()
-  @IsNotEmpty({ message: '分类不能为空' })
-  @IsIn(['餐饮', '购物', '交通', '娱乐', '医疗', '住房', '其他'], {
-    message: '分类不合法',
-  })
-  category: string; // 分类（如：餐饮、购物）
+  @IsNumber()
+  @IsNotEmpty({ message: '标签Id不能为空' })
+  tagId: number;
 
   @IsString()
   @IsOptional()

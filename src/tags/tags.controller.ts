@@ -6,6 +6,7 @@ import { GetUser } from '@/decorators/getUser.decorator';
 @Controller('tags')
 export class TagsController {
   constructor(private readonly tagsService: TagsService) { }
+
   @Get()
   async getTags(@GetUser('userId') userId) {
     return await this.tagsService.getTags(userId);
