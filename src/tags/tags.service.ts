@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Tag } from './entities/tag.entity';
 import { IsNull, Repository } from 'typeorm';
 import { CreateTagDto } from './dto/create-tag.dto';
+import os from 'os';
 
 @Injectable()
 export class TagsService {
@@ -29,10 +30,12 @@ export class TagsService {
         { createdBy: { id: userId } }
       ]
     });
+    // 处理图片路径问题
+    const newTags: Tag[] = tags.map(tag => ({ ...tag, icon: `http://localhost:3000/images/tags/${tag.icon}` }))
     // 收入
-    const incomeTags = tags.filter(tag => tag.type === 'income');
+    const incomeTags = newTags.filter(tag => tag.type === 'income');
     // 支出
-    const expenseTags = tags.filter(tag => tag.type === 'expense');
+    const expenseTags = newTags.filter(tag => tag.type === 'expense');
     return {
       incomeTags,
       expenseTags
