@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tag } from './entities/tag.entity';
 import { IsNull, Repository } from 'typeorm';
@@ -12,7 +12,7 @@ export class TagsService {
     @InjectRepository(Tag)
     private readonly tagRepository: Repository<Tag>,
   ) { }
-  async create(tag: CreateTagDto, userId: number) {
+  async create(userId: number, tag: CreateTagDto) {
     const { isPrivate, ...prop } = tag;
     if (tag.isPrivate) {
       return await this.tagRepository.save({
@@ -24,26 +24,21 @@ export class TagsService {
   }
 
   async getTags(userId: number) {
-    const tags = await this.tagRepository.find({
+    return await this.tagRepository.find({
       where: [
         { createdBy: IsNull() },
         { createdBy: { id: userId } }
       ]
-    });
-    // 收入
-    const incomeTags = tags.filter(tag => tag.type === 'income');
-    // 支出
-    const expenseTags = tags.filter(tag => tag.type === 'expense');
-    return {
-      incomeTags,
-      expenseTags
-    }
+    })
   }
 
-  async remove(id: number, userId: number) {
-    return await this.tagRepository.delete({
-      id,
-      createdBy: { id: userId }
+  async remove(userId: number, tagId: number) {
+    const tag = await this.tagRepository.findOne({
+      where: { id: tagId, createdBy: { id: userId } },
     });
+    if (!tag) {
+      throw new NotFoundException('标签不存在或无权限删除');
+    }
+    return this.tagRepository.remove(tag);
   }
 }

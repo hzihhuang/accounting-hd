@@ -15,7 +15,7 @@ export class GetBillsDto {
   // 账单类型（默认值：'all'）
   @IsIn(['all', 'income', 'expense'])
   @IsOptional()
-  @Transform(({ value }) => value ?? 'all') // 重点：未传时填充默认值
+  @Transform(({ value }) => value ?? 'all')
   type?: 'all' | 'income' | 'expense';
 
   // 标签 ID

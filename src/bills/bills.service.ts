@@ -2,8 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBillDto } from './dto/create-bill.dto';
 import { Bill } from './entities/bill.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, FindOperator, FindOptionsWhere, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { Between, FindOptionsWhere, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { GetBillsDto } from './dto/get-bills.dto';
+import { PatchBillDto } from './dto/patch-bill-dto';
 
 @Injectable()
 export class BillsService {
@@ -13,13 +14,18 @@ export class BillsService {
   ) { }
 
   create(userId: number, createBillDto: CreateBillDto) {
-    const { type, amount, tagId, note } = createBillDto;
+    const { type, amount, tagId, note, date } = createBillDto;
     const bill = this.billsRepository.create({
       type,
       amount,
       note,
       tag: { id: tagId },
       user: { id: userId },
+      date: date || new Date().toLocaleDateString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).replace(/\//g, '-'),
     });
     return this.billsRepository.save(bill);
   }
@@ -107,8 +113,18 @@ export class BillsService {
       where: { id: billId, user: { id: userId } },
     });
     if (!bill) {
-      throw new NotFoundException('账单不存在或无权限删除');
+      throw new NotFoundException('账单不存在');
     }
     return this.billsRepository.remove(bill);
+  }
+
+  async patch(userId: number, billId: number, updateBillDto: PatchBillDto) {
+    const bill = await this.billsRepository.findOne({
+      where: { id: billId, user: { id: userId } },
+    });
+    if (!bill) {
+      throw new NotFoundException('账单不存在');
+    }
+    return this.billsRepository.save(Object.assign(bill, updateBillDto))
   }
 }

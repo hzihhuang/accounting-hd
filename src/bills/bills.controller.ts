@@ -7,11 +7,13 @@ import {
   Delete,
   Query,
   Request,
+  Patch,
 } from '@nestjs/common';
 import { BillsService } from './bills.service';
 import { CreateBillDto } from './dto/create-bill.dto';
 import { GetUser } from '@/decorators/getUser.decorator';
 import { GetBillsDto } from './dto/get-bills.dto';
+import { PatchBillDto } from './dto/patch-bill-dto';
 
 @Controller('bills')
 export class BillsController {
@@ -31,5 +33,10 @@ export class BillsController {
   @Delete(':id')
   async remove(@GetUser('userId') userId: number, @Param('id') id: number) {
     return this.billsService.remove(userId, id);
+  }
+
+  @Patch(':id')
+  async patch(@GetUser('userId') userId: number, @Param('id') id: number, @Body() updateBillDto: PatchBillDto) {
+    return this.billsService.patch(userId, id, updateBillDto);
   }
 }

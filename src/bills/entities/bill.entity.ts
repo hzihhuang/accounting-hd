@@ -28,6 +28,10 @@ export class Bill {
   @ManyToOne(() => User, (user) => user.bills, { onDelete: 'CASCADE' })
   user: User;
 
+  // 账单时间
+  @Column({ type: 'date' })
+  date: Date;
+
   @CreateDateColumn()
   createdAt: Date;
 }
