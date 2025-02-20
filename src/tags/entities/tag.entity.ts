@@ -21,8 +21,14 @@ export class Tag {
   @Column({ type: 'enum', enum: ['income', 'expense'] })
   type: 'income' | 'expense'; // 标签类型，收入 or 支出
 
-  @Column({ nullable: true })
-  icon: string; // 可选：图标（存 URL 或 class）
+  @Column({
+    type: 'varchar',
+    transformer: {
+      to: (value: string | null) => value, // 存入数据库时不处理
+      from: (value: string) => value.startsWith('http') ? value : `http://localhost:3000/images/tags/${value}`,
+    },
+  })
+  icon: string; // 可选：图标
 
   @OneToMany(() => Bill, (bill) => bill.tag)
   bills: Bill[];

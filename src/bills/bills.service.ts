@@ -25,7 +25,7 @@ export class BillsService {
   }
 
   async findAll(userId: number, query: GetBillsDto) {
-    const { type = 'all', tagId, startDate, endDate, page = 1, pageSize = 10 } = query;
+    const { type = 'all', tagId, date, startDate, endDate, page = 1, pageSize = 10 } = query;
 
     const where: FindOptionsWhere<Bill> = { user: { id: userId } };
 
@@ -35,12 +35,51 @@ export class BillsService {
     if (tagId) {
       where.tag = { id: tagId };
     }
-    if (startDate && endDate) {
-      where.createdAt = Between(new Date(startDate), new Date(endDate));
-    } else if (startDate) {
-      where.createdAt = MoreThanOrEqual(new Date(startDate));
-    } else if (endDate) {
-      where.createdAt = LessThanOrEqual(new Date(endDate));
+    if (startDate || endDate) {
+      // 优先使用 startDate 和 endDate 进行范围查询
+      let start: Date | undefined, end: Date | undefined;
+
+      if (startDate) {
+        start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+      }
+
+      if (endDate) {
+        end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+      }
+
+      if (start && end) {
+        where.createdAt = Between(start, end);
+      } else if (start) {
+        where.createdAt = MoreThanOrEqual(start);
+      } else if (end) {
+        where.createdAt = LessThanOrEqual(end);
+      }
+    } else if (date) {
+      // 仅在 startDate 和 endDate 不存在时，才使用 date
+      let start: Date, end: Date;
+
+      if (/^\d{4}$/.test(date)) {
+        // 识别 YYYY（查询整年）
+        start = new Date(`${date}-01-01`);
+        end = new Date(`${date}-12-31`);
+      } else if (/^\d{4}-\d{2}$/.test(date)) {
+        // 识别 YYYY-MM（查询整月）
+        start = new Date(`${date}-01`);
+        end = new Date(start);
+        end.setMonth(end.getMonth() + 1, 0); // 该月最后一天
+      } else if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        // 识别 YYYY-MM-DD（查询当天）
+        start = new Date(date);
+        end = new Date(date);
+      } else {
+        throw new Error('日期格式无效。使用YYYY、YYYY-MM或YYYY-MM-DD。');
+      }
+      // 设置时间范围
+      start.setHours(0, 0, 0, 0);
+      end.setHours(23, 59, 59, 999);
+      where.createdAt = Between(start, end);
     }
 
     const skip = pageSize > 0 ? (page - 1) * pageSize : undefined;
@@ -51,6 +90,7 @@ export class BillsService {
       order: { createdAt: 'DESC' },
       skip,
       take,
+      relations: ['tag'],
     });
 
     return {

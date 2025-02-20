@@ -13,10 +13,10 @@ export class Bill {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  type: string; // 支出/收入
+  @Column({ type: 'enum', enum: ['income', 'expense'] as const })
+  type: 'income' | 'expense'; // 标签类型，收入 or 支出
 
-  @Column('decimal', { precision: 10, scale: 2 })
+  @Column('float')
   amount: number; // 金额
 
   @Column({ nullable: true })

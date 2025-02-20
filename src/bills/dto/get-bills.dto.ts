@@ -8,14 +8,15 @@ import {
   IsIn,
   IsOptional,
   IsDateString,
+  Matches,
 } from 'class-validator';
 
 export class GetBillsDto {
   // 账单类型（默认值：'all'）
-  @IsIn(['all', 'income', 'expend'])
+  @IsIn(['all', 'income', 'expense'])
   @IsOptional()
   @Transform(({ value }) => value ?? 'all') // 重点：未传时填充默认值
-  type?: 'all' | 'income' | 'expend';
+  type?: 'all' | 'income' | 'expense';
 
   // 标签 ID
   @IsOptional()
@@ -23,6 +24,13 @@ export class GetBillsDto {
   @Type(() => Number)
   @Transform(({ value }) => (value ? parseInt(value, 10) : undefined)) // 允许数字字符串
   tagId?: number;
+
+  @IsOptional()
+  @Matches(/^\d{4}(-\d{2}(-\d{2})?)?$/, {
+    message: '日期格式无效。使用YYYY、YYYY-MM或YYYY-MM-DD。',
+  })
+  @IsDateString()
+  date?: string;
 
   // 开始日期
   @IsOptional()
