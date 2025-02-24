@@ -45,7 +45,7 @@ export class AuthService {
       );
       return newToken;
     } catch (error) {
-      throw new Error('Invalid token');
+      throw new BadRequestException('Invalid token');
     }
   }
 

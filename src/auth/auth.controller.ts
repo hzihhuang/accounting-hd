@@ -1,7 +1,6 @@
-import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { Public } from '@/decorators/public.decorator';
 import { AuthService } from './auth.service';
-import { Response } from 'express';
 import { CreateUserDto } from '@/user/dto/create-user.dto';
 
 @Controller('auth')
@@ -10,23 +9,22 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  async register(@Body() body: CreateUserDto, @Res() res: Response) {
-    if (!body) return res.status(400).send({ message: '请求参数错误' });
+  async register(@Body() body: CreateUserDto) {
+    if (!body) throw new BadRequestException('请求参数错误');
     const user = await this.authService.register(body);
-    // 如果用户注册成功
-    return res.send({ message: '注册成功', user });
+    return { user };
   }
 
   @Public()
   @Post('login')
-  async login(@Body() body, @Res() res) {
+  async login(@Body() body) {
     const { username, password } = body;
     const user = await this.authService.validateUser({ username, password });
     if (!user) {
-      return res.status(400).send({ message: '用户或密码错误' });
+      throw new BadRequestException('用户或密码错误');
     }
     const token = await this.authService.generateToken(user);
-    return res.send({ message: '登录成功', token });
+    return { token, user };
   }
 
   @Post('refresh')

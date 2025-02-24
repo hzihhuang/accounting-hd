@@ -26,8 +26,7 @@ export class BillsController {
 
   @Get()
   async findAll(@GetUser('userId') userId: number, @Query() query: GetBillsDto) {
-    const data = await this.billsService.findAll(userId, query);
-    return data
+    return this.billsService.findAll(userId, query);
   }
 
   @Delete(':id')

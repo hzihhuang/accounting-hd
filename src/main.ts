@@ -1,9 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { ResponseInterceptor } from './response.interceptor';
+import { HttpExceptionFilter } from './http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // 成功格式
+  app.useGlobalInterceptors(new ResponseInterceptor());
+  // 异常格式
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   // 全局启用 ValidationPipe
   app.useGlobalPipes(

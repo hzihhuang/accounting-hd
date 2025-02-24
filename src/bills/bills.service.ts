@@ -85,13 +85,13 @@ export class BillsService {
       // 设置时间范围
       start.setHours(0, 0, 0, 0);
       end.setHours(23, 59, 59, 999);
-      where.createdAt = Between(start, end);
+      where.date = Between(start, end);
     }
 
     const skip = pageSize > 0 ? (page - 1) * pageSize : undefined;
     const take = pageSize > 0 ? pageSize : undefined;
 
-    const [data, total] = await this.billsRepository.findAndCount({
+    const [list, total] = await this.billsRepository.findAndCount({
       where,
       order: { createdAt: 'DESC' },
       skip,
@@ -100,7 +100,7 @@ export class BillsService {
     });
 
     return {
-      data,
+      list,
       total,
       totalPages: pageSize > 0 ? Math.ceil(total / pageSize) : 1,
       page,

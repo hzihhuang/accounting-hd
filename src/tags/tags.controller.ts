@@ -9,7 +9,7 @@ export class TagsController {
 
   @Get()
   async getTags(@GetUser('userId') userId) {
-    return await this.tagsService.getTags(userId);
+    return this.tagsService.getTags(userId);
   }
 
   @Post()
