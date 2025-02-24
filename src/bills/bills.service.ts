@@ -127,4 +127,15 @@ export class BillsService {
     }
     return this.billsRepository.save(Object.assign(bill, updateBillDto))
   }
+
+  // 获取存在账单记录的日期列表 YYYY MM DD
+  async getDates(userId: number) {
+    const dates = await this.billsRepository
+      .createQueryBuilder('bills')
+      .select('bills.date')
+      .where({ user: { id: userId } })
+      .distinct(true)
+      .getMany();
+    return dates.map((item) => item.date);
+  }
 }

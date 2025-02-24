@@ -39,4 +39,9 @@ export class BillsController {
   async patch(@GetUser('userId') userId: number, @Param('id') id: number, @Body() updateBillDto: PatchBillDto) {
     return this.billsService.patch(userId, id, updateBillDto);
   }
+
+  @Get('dates')
+  async getDates(@GetUser('userId') userId: number) {
+    return this.billsService.getDates(userId);
+  }
 }
