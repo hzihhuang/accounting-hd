@@ -26,6 +26,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     response.status(status).json({
       code: status,
+      success: false,
       message,
       data: status !== 500 ? null : exception.stack, // 500 错误时返回错误堆栈，其他情况不返回
     });

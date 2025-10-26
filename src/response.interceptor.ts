@@ -12,6 +12,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, any> {
     return next.handle().pipe(
       map((data) => ({
         code: 200,
+        success: true,
         message: '请求成功',
         data,
       })),
