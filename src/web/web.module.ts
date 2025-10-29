@@ -3,12 +3,11 @@ import { UserModule } from '@/web/user/user.module';
 import { BillsModule } from '@/web/bills/bills.module';
 import { AuthModule } from '@/web/auth/auth.module';
 import { TagsModule } from '@/web/tags/tags.module';
-import { UploadModule } from '@/web/upload/upload.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from '@/web/auth/jwt-auth.guard';
 
 @Module({
-  imports: [UserModule, BillsModule, AuthModule, TagsModule, UploadModule],
+  imports: [UserModule, BillsModule, AuthModule, TagsModule],
   providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
 export class WebModule {}

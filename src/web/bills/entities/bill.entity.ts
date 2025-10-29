@@ -33,5 +33,5 @@ export class Bill {
   date: Date;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdTime: Date;
 }

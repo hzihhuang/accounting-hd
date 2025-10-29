@@ -12,6 +12,7 @@ import { Tag } from '@/web/tags/entities/tag.entity';
 import { AdminUser } from '@/admin/user/entities/user.entity';
 import { AdminRole } from '@/admin/user/entities/role.entity';
 import { AdminPermission } from '@/admin/user/entities/permission.entity';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AdminPermission } from '@/admin/user/entities/permission.entity';
       serveRoot: '/images', // 访问 URL 前缀
     }),
 
+    UploadModule,
     WebModule,
     AdminModule,
   ],

@@ -23,6 +23,7 @@ export class Tag {
 
   @Column({
     type: 'varchar',
+    nullable: true,
     transformer: {
       to: (value: string | null) => value, // 存入数据库时不处理
       from: (value: string) =>
@@ -31,7 +32,10 @@ export class Tag {
           : `http://localhost:3000/images/tags/${value}`,
     },
   })
-  icon: string; // 可选：图标
+  img: string; // 可选：图标
+
+  @Column({ type: 'text', nullable: true })
+  remark: string;
 
   @OneToMany(() => Bill, (bill) => bill.tag)
   bills: Bill[];
@@ -43,8 +47,8 @@ export class Tag {
   createdBy?: User; // 为空时表示公共标签，非空表示用户自定义标签
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
+  createdTime: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt: Date;
+  updatedTime: Date;
 }

@@ -3,9 +3,16 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ResponseInterceptor } from './response.interceptor';
 import { HttpExceptionFilter } from './http-exception.filter';
+import { join } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  /** 静态 */
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+    prefix: '/uploads/',
+  });
 
   // 成功格式
   app.useGlobalInterceptors(new ResponseInterceptor());

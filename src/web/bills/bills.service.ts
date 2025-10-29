@@ -2,7 +2,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBillDto } from './dto/create-bill.dto';
 import { Bill } from './entities/bill.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, FindOptionsWhere, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import {
+  Between,
+  FindOptionsWhere,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm';
 import { GetBillsDto } from './dto/get-bills.dto';
 import { PatchBillDto } from './dto/patch-bill-dto';
 
@@ -11,7 +17,7 @@ export class BillsService {
   constructor(
     @InjectRepository(Bill)
     private readonly billsRepository: Repository<Bill>,
-  ) { }
+  ) {}
 
   create(userId: number, createBillDto: CreateBillDto) {
     const { type, amount, tagId, note, date } = createBillDto;
@@ -21,17 +27,29 @@ export class BillsService {
       note,
       tag: { id: tagId },
       user: { id: userId },
-      date: date || new Date().toLocaleDateString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      }).replace(/\//g, '-'),
+      date:
+        date ||
+        new Date()
+          .toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+          })
+          .replace(/\//g, '-'),
     });
     return this.billsRepository.save(bill);
   }
 
   async findAll(userId: number, query: GetBillsDto) {
-    const { type = 'all', tagId, date, startDate, endDate, page = 1, pageSize = 10 } = query;
+    const {
+      type = 'all',
+      tagId,
+      date,
+      startDate,
+      endDate,
+      page = 1,
+      pageSize = 10,
+    } = query;
 
     const where: FindOptionsWhere<Bill> = { user: { id: userId } };
 
@@ -56,11 +74,11 @@ export class BillsService {
       }
 
       if (start && end) {
-        where.createdAt = Between(start, end);
+        where.createdTime = Between(start, end);
       } else if (start) {
-        where.createdAt = MoreThanOrEqual(start);
+        where.createdTime = MoreThanOrEqual(start);
       } else if (end) {
-        where.createdAt = LessThanOrEqual(end);
+        where.createdTime = LessThanOrEqual(end);
       }
     } else if (date) {
       // 仅在 startDate 和 endDate 不存在时，才使用 date
@@ -93,7 +111,7 @@ export class BillsService {
 
     const [list, total] = await this.billsRepository.findAndCount({
       where,
-      order: { createdAt: 'DESC' },
+      order: { createdTime: 'DESC' },
       skip,
       take,
       relations: ['tag'],
@@ -125,7 +143,7 @@ export class BillsService {
     if (!bill) {
       throw new NotFoundException('账单不存在');
     }
-    return this.billsRepository.save(Object.assign(bill, updateBillDto))
+    return this.billsRepository.save(Object.assign(bill, updateBillDto));
   }
 
   // 获取存在账单记录的日期列表 YYYY MM DD
