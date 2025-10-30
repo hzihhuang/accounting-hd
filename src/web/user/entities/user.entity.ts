@@ -1,5 +1,4 @@
 import { Bill } from '@/web/bills/entities/bill.entity';
-import { Tag } from '@/web/tags/entities/tag.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -31,9 +30,6 @@ export class User {
 
   @OneToMany(() => Bill, (bill) => bill.user)
   bills: Bill[];
-
-  @OneToMany(() => Tag, (tag) => tag.createdBy)
-  tags: Tag[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

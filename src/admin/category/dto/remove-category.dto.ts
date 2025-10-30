@@ -1,15 +1,14 @@
-// remove-tag.dto.ts
 import { Transform, Type } from 'class-transformer';
 import { IsInt, IsPositive, IsArray, ArrayMinSize } from 'class-validator';
 
-export class RemoveTagDto {
+export class RemoveCategoryDto {
   @Type(() => Number) // 确保这个装饰器在最前面
   @IsInt({ message: 'ID必须是整数' })
   @IsPositive({ message: 'ID必须是正数' })
   id: number;
 }
 
-export class BatchRemoveTagDto {
+export class BatchRemoveCategoryDto {
   @Transform(({ value }) => {
     if (Array.isArray(value)) {
       return value.map((v) => Number(v)); // 手动转换每个元素

@@ -8,11 +8,10 @@ import { AdminModule } from '@/admin/admin.module';
 // 数据表
 import { User } from '@/web/user/entities/user.entity';
 import { Bill } from '@/web/bills/entities/bill.entity';
-import { Tag } from '@/web/tags/entities/tag.entity';
 import { AdminUser } from '@/admin/user/entities/user.entity';
 import { AdminRole } from '@/admin/user/entities/role.entity';
 import { AdminPermission } from '@/admin/user/entities/permission.entity';
-import { UploadModule } from './upload/upload.module';
+import { Category } from '@/admin/category/entities/category.entity';
 
 @Module({
   imports: [
@@ -23,7 +22,7 @@ import { UploadModule } from './upload/upload.module';
       username: 'root', // 你的数据库用户名
       password: 'hzh0914', // 你的数据库密码
       database: 'accounting', // 你的数据库名
-      entities: [User, Bill, Tag, AdminUser, AdminRole, AdminPermission],
+      entities: [User, Bill, Category, AdminUser, AdminRole, AdminPermission],
       synchronize: true, // 自动同步数据库（开发环境可用，生产环境请关闭）
     }),
     ServeStaticModule.forRoot({
@@ -31,7 +30,6 @@ import { UploadModule } from './upload/upload.module';
       serveRoot: '/images', // 访问 URL 前缀
     }),
 
-    UploadModule,
     WebModule,
     AdminModule,
   ],

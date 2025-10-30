@@ -1,5 +1,5 @@
 import { Bill } from '@/web/bills/entities/bill.entity';
-import { User } from '@/web/user/entities/user.entity';
+import { AdminUser } from '@/admin/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -10,8 +10,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('tags')
-export class Tag {
+@Entity('category')
+export class Category {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -37,14 +37,14 @@ export class Tag {
   @Column({ type: 'text', nullable: true })
   remark: string;
 
-  @OneToMany(() => Bill, (bill) => bill.tag)
+  @OneToMany(() => Bill, (bill) => bill.category)
   bills: Bill[];
 
-  @ManyToOne(() => User, (user) => user.tags, {
+  @ManyToOne(() => AdminUser, (user) => user.categorys, {
     nullable: true,
     onDelete: 'CASCADE',
   })
-  createdBy?: User; // 为空时表示公共标签，非空表示用户自定义标签
+  createdBy?: AdminUser; // 为空时表示公共标签，非空表示用户自定义标签
 
   @CreateDateColumn({ type: 'timestamp' })
   createdTime: Date;

@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 import { User } from '@/web/user/entities/user.entity';
-import { Tag } from '@/web/tags/entities/tag.entity';
+import { Category } from '@/admin/category/entities/category.entity';
 
 @Entity('bills')
 export class Bill {
@@ -22,8 +22,10 @@ export class Bill {
   @Column({ nullable: true })
   note: string; // 备注
 
-  @ManyToOne(() => Tag, (tag) => tag.bills, { onDelete: 'SET NULL' })
-  tag: Tag; // 分类（如：餐饮、购物）
+  @ManyToOne(() => Category, (category) => category.bills, {
+    onDelete: 'SET NULL',
+  })
+  category: Category; // 分类（如：餐饮、购物）
 
   @ManyToOne(() => User, (user) => user.bills, { onDelete: 'CASCADE' })
   user: User;

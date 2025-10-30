@@ -1,10 +1,7 @@
 import { Transform, Type } from 'class-transformer';
 import {
-  IsNotEmpty,
   IsNumber,
-  IsString,
   Min,
-  MaxLength,
   IsIn,
   IsOptional,
   IsDateString,
@@ -23,7 +20,7 @@ export class GetBillsDto {
   @IsNumber()
   @Type(() => Number)
   @Transform(({ value }) => (value ? parseInt(value, 10) : undefined)) // 允许数字字符串
-  tagId?: number;
+  categoryId?: number;
 
   @IsOptional()
   @Matches(/^\d{4}(-\d{2}(-\d{2})?)?$/, {

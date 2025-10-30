@@ -6,7 +6,7 @@ import {
   IsOptional,
 } from 'class-validator';
 
-export class CreateTagDto {
+export class CreateCategoryDto {
   @IsNotEmpty({ message: '名称不能为空' })
   @IsString({ message: '名称必须是字符串' })
   @MaxLength(8, { message: '名称最多 8 个字符' })

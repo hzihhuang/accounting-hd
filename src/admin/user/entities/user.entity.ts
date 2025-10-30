@@ -7,8 +7,10 @@ import {
   UpdateDateColumn,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { AdminRole } from './role.entity';
+import { Category } from '@/admin/category/entities/category.entity';
 
 @Entity('admin_users')
 export class AdminUser {
@@ -44,6 +46,9 @@ export class AdminUser {
 
   @UpdateDateColumn({ name: 'updated_at', comment: '更新时间' })
   updatedAt: Date;
+
+  @OneToMany(() => Category, (tag) => tag.createdBy)
+  categorys: Category[];
 
   @ManyToMany(() => AdminRole, (role) => role.users)
   @JoinTable({

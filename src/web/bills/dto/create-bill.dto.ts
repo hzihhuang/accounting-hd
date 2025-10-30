@@ -22,7 +22,7 @@ export class CreateBillDto {
 
   @IsNumber()
   @IsNotEmpty({ message: '标签Id不能为空' })
-  tagId: number;
+  categoryId: number;
 
   @IsString()
   @IsOptional()

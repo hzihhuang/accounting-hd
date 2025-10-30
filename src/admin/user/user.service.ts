@@ -16,8 +16,8 @@ export class UserService {
   ) {}
 
   // 生成 token
-  async generateToken(user: AdminUser) {
-    const payload = { username: user.username, sub: user.id };
+  async generateToken(user: AdminUser, roles: string[]) {
+    const payload = { username: user.username, sub: user.id, roles };
     return this.jwtService.sign(payload);
   }
 

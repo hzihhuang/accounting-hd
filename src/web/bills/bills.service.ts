@@ -20,12 +20,12 @@ export class BillsService {
   ) {}
 
   create(userId: number, createBillDto: CreateBillDto) {
-    const { type, amount, tagId, note, date } = createBillDto;
+    const { type, amount, categoryId, note, date } = createBillDto;
     const bill = this.billsRepository.create({
       type,
       amount,
       note,
-      tag: { id: tagId },
+      category: { id: categoryId },
       user: { id: userId },
       date:
         date ||
@@ -43,7 +43,7 @@ export class BillsService {
   async findAll(userId: number, query: GetBillsDto) {
     const {
       type = 'all',
-      tagId,
+      categoryId,
       date,
       startDate,
       endDate,
@@ -56,8 +56,8 @@ export class BillsService {
     if (type !== 'all') {
       where.type = type;
     }
-    if (tagId) {
-      where.tag = { id: tagId };
+    if (categoryId) {
+      where.category = { id: categoryId };
     }
     if (startDate || endDate) {
       // 优先使用 startDate 和 endDate 进行范围查询

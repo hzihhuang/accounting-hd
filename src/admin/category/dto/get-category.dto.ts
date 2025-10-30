@@ -9,7 +9,7 @@ import {
   IsEnum,
 } from 'class-validator';
 
-export class GetTagDto {
+export class GetCategoryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt({ message: '页码必须是整数' })
