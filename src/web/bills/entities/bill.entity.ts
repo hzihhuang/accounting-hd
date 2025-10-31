@@ -34,6 +34,6 @@ export class Bill {
   @Column({ type: 'date' })
   date: Date;
 
-  @CreateDateColumn()
-  createdTime: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 }

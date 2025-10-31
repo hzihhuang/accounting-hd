@@ -26,7 +26,7 @@ export class AdminPermission {
   @Column({ default: 1 })
   status: number;
 
-  @CreateDateColumn({ name: 'created_time' })
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   // 关键：一个权限可以关联多个角色

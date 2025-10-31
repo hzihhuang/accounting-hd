@@ -74,11 +74,11 @@ export class BillsService {
       }
 
       if (start && end) {
-        where.createdTime = Between(start, end);
+        where.createdAt = Between(start, end);
       } else if (start) {
-        where.createdTime = MoreThanOrEqual(start);
+        where.createdAt = MoreThanOrEqual(start);
       } else if (end) {
-        where.createdTime = LessThanOrEqual(end);
+        where.createdAt = LessThanOrEqual(end);
       }
     } else if (date) {
       // 仅在 startDate 和 endDate 不存在时，才使用 date
@@ -111,7 +111,7 @@ export class BillsService {
 
     const [list, total] = await this.billsRepository.findAndCount({
       where,
-      order: { createdTime: 'DESC' },
+      order: { createdAt: 'DESC' },
       skip,
       take,
       relations: ['tag'],

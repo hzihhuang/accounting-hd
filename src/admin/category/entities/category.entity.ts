@@ -47,8 +47,8 @@ export class Category {
   createdBy?: AdminUser; // 为空时表示公共标签，非空表示用户自定义标签
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdTime: Date;
+  createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
-  updatedTime: Date;
+  updatedAt: Date;
 }

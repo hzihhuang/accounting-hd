@@ -40,7 +40,7 @@ export class CategoryService {
     const skip = (page - 1) * pageSize;
 
     // 构建查询条件
-    const where: any = { createdBy: IsNull() }; // 只查询系统标签
+    const where: any = {};
     if (type !== 'all') {
       where.type = type;
     }
