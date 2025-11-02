@@ -23,7 +23,6 @@ export class RolesGuard implements CanActivate {
       return true; // 如果没有设置角色限制，允许访问
     }
     const { user } = context.switchToHttp().getRequest();
-    console.log(user);
     const hasRole = requiredRoles.some((role) => user.roles?.includes(role));
     if (!hasRole) {
       throw new ForbiddenException('权限不足');

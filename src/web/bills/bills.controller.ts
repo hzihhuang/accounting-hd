@@ -1,6 +1,5 @@
-import { Get, Post, Body, Param, Delete, Query, Patch } from '@nestjs/common';
+import { Get, Body, Param, Delete, Query, Patch } from '@nestjs/common';
 import { BillsService } from './bills.service';
-import { CreateBillDto } from './dto/create-bill.dto';
 import { GetUser } from '@/web/decorators/getUser.decorator';
 import { GetBillsDto } from './dto/get-bills.dto';
 import { PatchBillDto } from './dto/patch-bill-dto';
@@ -9,14 +8,6 @@ import { WebController } from '@/web/WebController';
 @WebController('bills')
 export class BillsController {
   constructor(private readonly billsService: BillsService) {}
-
-  @Post()
-  async create(
-    @GetUser('userId') userId: number,
-    @Body() createBillDto: CreateBillDto,
-  ) {
-    return this.billsService.create(userId, createBillDto);
-  }
 
   @Get()
   async findAll(

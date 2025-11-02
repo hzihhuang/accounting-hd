@@ -20,7 +20,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       envFilePath: `env/.env.${process.env.NODE_ENV || 'development'}`,
       isGlobal: true,
     }),
-
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -33,7 +32,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         database: configService.get('DB_DATABASE'), // accounting
         entities: [User, Bill, Category, AdminUser, AdminRole, AdminPermission],
         synchronize: configService.get('NODE_ENV') !== 'production',
-        logging: configService.get('NODE_ENV') === 'development',
       }),
     }),
 

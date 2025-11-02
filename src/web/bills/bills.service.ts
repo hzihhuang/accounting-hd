@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateBillDto } from './dto/create-bill.dto';
 import { Bill } from './entities/bill.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
@@ -18,27 +17,6 @@ export class BillsService {
     @InjectRepository(Bill)
     private readonly billsRepository: Repository<Bill>,
   ) {}
-
-  create(userId: number, createBillDto: CreateBillDto) {
-    const { type, amount, categoryId, note, date } = createBillDto;
-    const bill = this.billsRepository.create({
-      type,
-      amount,
-      note,
-      category: { id: categoryId },
-      user: { id: userId },
-      date:
-        date ||
-        new Date()
-          .toLocaleDateString('zh-CN', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-          })
-          .replace(/\//g, '-'),
-    });
-    return this.billsRepository.save(bill);
-  }
 
   async findAll(userId: number, query: GetBillsDto) {
     const {

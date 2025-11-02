@@ -26,10 +26,17 @@ export class Category {
     nullable: true,
     transformer: {
       to: (value: string | null) => value, // 存入数据库时不处理
-      from: (value: string) =>
-        value.startsWith('http')
+      from: (value: string | null) => {
+        // 添加空值检查
+        if (value === null || value === undefined || value === '') {
+          return null; // 或者返回一个默认图标
+          // return 'http://localhost:3000/images/tags/default.png';
+        }
+        // 现在可以安全地调用 startsWith
+        return value.startsWith('http')
           ? value
-          : `http://localhost:3000/images/tags/${value}`,
+          : `http://localhost:3000/images/tags/${value}`;
+      },
     },
   })
   img: string; // 可选：图标

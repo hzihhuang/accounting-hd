@@ -17,10 +17,10 @@ export class Bill {
   type: 'income' | 'expense'; // 标签类型，收入 or 支出
 
   @Column('float')
-  amount: number; // 金额
+  price: number; // 金额
 
   @Column({ nullable: true })
-  note: string; // 备注
+  remark: string; // 备注
 
   @ManyToOne(() => Category, (category) => category.bills, {
     onDelete: 'SET NULL',

@@ -28,12 +28,19 @@ export class User {
   @Column({ nullable: true })
   avatar: string; // 头像 URL
 
+  @Column({
+    type: 'tinyint',
+    default: 1,
+    comment: '状态：1-正常，0-禁用',
+  })
+  status: number;
+
   @OneToMany(() => Bill, (bill) => bill.user)
   bills: Bill[];
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

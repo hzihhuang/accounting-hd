@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
-import { In, IsNull, Like, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { GetCategoryDto } from './dto/get-category.dto';
 import { AdminUser } from '../user/entities/user.entity';
@@ -22,14 +22,13 @@ export class CategoryService {
   }
 
   async update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    // 直接更新，不检查用户权限
     const result = await this.categoryRepository.update(
       { id }, // 只根据ID更新
       updateCategoryDto,
     );
 
     if (result.affected === 0) {
-      throw new NotFoundException('分类不存在');
+      throw new NotFoundException('分类更新失败');
     }
 
     return this.categoryRepository.findOne({ where: { id } });
@@ -45,7 +44,14 @@ export class CategoryService {
       where.type = type;
     }
     if (keyword) {
-      where.name = Like(`%${keyword}%`);
+      const ids = keyword
+        .split(',')
+        .map((id) => parseInt(id.trim()))
+        .filter((id) => !isNaN(id) && id > 0);
+
+      if (ids.length > 0) {
+        where.id = In(ids);
+      }
     }
     const [list, total] = await this.categoryRepository.findAndCount({
       where,
@@ -61,7 +67,7 @@ export class CategoryService {
       total,
       pageSize,
       currentPage: page,
-      totalPages: Math.ceil(total / pageSize),
+      totalPages: pageSize > 0 ? Math.ceil(total / pageSize) : 1,
     };
   }
 
