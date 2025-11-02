@@ -1,5 +1,15 @@
 // src/admin/web-user/dto/get-users.dto.ts
-import { IsOptional, IsInt, Min, Max, IsString, IsIn } from 'class-validator';
+import {
+  IsOptional,
+  IsInt,
+  Min,
+  Max,
+  IsString,
+  IsIn,
+  IsBoolean,
+  IsDateString,
+  IsNumber,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class GetUsersDto {
@@ -21,7 +31,21 @@ export class GetUsersDto {
   keyword?: string;
 
   @IsOptional()
-  @IsString()
-  @IsIn(['active', 'inactive', 'banned'])
-  status?: string;
+  @IsNumber()
+  @Type(() => Number)
+  @IsIn([0, 1])
+  status?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  @Type(() => Boolean)
+  needSummary?: boolean;
+
+  @IsOptional()
+  @IsDateString({}, { message: '开始日期格式无效，正确格式: YYYY-MM-DD' })
+  startDate?: string;
+
+  @IsOptional()
+  @IsDateString({}, { message: '结束日期格式无效，正确格式: YYYY-MM-DD' })
+  endDate?: string;
 }

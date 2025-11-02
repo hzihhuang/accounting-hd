@@ -40,4 +40,10 @@ export class BillsController {
   ) {
     return this.billsService.update(id, updateBillDto);
   }
+
+  // // 批量删除
+  // @Delete('batch')
+  // async batchRemove(@Body('ids') ids: number[]) {
+  //   return this.billsService.batchRemove(ids);
+  // }
 }

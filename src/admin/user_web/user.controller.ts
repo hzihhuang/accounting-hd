@@ -1,13 +1,47 @@
-import { Get, Query } from '@nestjs/common';
+import {
+  Body,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { WebUserService } from './user.service';
 import { AdminController } from '@/admin/AdminController';
 import { GetUsersDto } from './dto/get-user-web.dto';
+import { UpdateUserStatusDto } from './dto/update-status.dto';
+import { CreateUserDto } from './dto/create-user-web.dto';
+import { RemoveUserDto } from './dto/delete-user-web.dto';
 
 @AdminController('web-user')
 export class WebUserController {
   constructor(private readonly userService: WebUserService) {}
+
   @Get()
   async findAll(@Query() query: GetUsersDto) {
     return this.userService.findAll(query);
+  }
+
+  // 修改用户状态
+  @Patch(':id')
+  async updateStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateStatusDto: UpdateUserStatusDto,
+  ) {
+    return this.userService.updateStatus(id, updateStatusDto);
+  }
+
+  // 新增用户
+  @Post()
+  async create(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
+  }
+
+  // 删除用户
+  @Delete(':id')
+  async remove(@Param() removeUserDto: RemoveUserDto) {
+    return this.userService.remove(removeUserDto.id);
   }
 }

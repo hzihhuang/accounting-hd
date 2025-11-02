@@ -30,12 +30,13 @@ export class User {
 
   @Column({
     type: 'tinyint',
+    width: 1,
     default: 1,
     comment: '状态：1-正常，0-禁用',
   })
   status: number;
 
-  @OneToMany(() => Bill, (bill) => bill.user)
+  @OneToMany(() => Bill, (bill) => bill.user, { cascade: true })
   bills: Bill[];
 
   @CreateDateColumn({ name: 'created_at' })
