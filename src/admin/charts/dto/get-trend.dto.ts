@@ -3,8 +3,8 @@ import { Type } from 'class-transformer';
 
 export class GetTrendDto {
   @IsOptional()
-  @IsEnum(['day', 'month', 'year'])
-  mode?: 'day' | 'month' | 'year' = 'day';
+  @IsEnum(['day', 'week', 'month', 'year'])
+  mode?: 'day' | 'week' | 'month' | 'year' = 'month';
 
   @IsOptional()
   @IsDateString()

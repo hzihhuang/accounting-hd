@@ -51,9 +51,9 @@ export class WebUserController {
   }
 
   // 批量删除
-    @Post('batch')
-    @Roles(Role.SUPER_ADMIN, Role.ADMIN)
-    async removeAll(@Body() batchRemoveDto: BatchRemoveUserDto) {
-      return this.categoryService.batchRemove(batchRemoveDto.ids);
-    }
+  @Post('batch')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+  async removeAll(@Body() batchRemoveDto: BatchRemoveUserDto) {
+    return this.userService.batchRemove(batchRemoveDto.ids);
+  }
 }

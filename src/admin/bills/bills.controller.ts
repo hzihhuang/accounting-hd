@@ -47,7 +47,7 @@ export class BillsController {
     return this.billsService.remove(params.id);
   }
 
-  @Delete('batch')
+  @Post('batch')
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   async batchRemove(@Body() body: BatchDeleteBillDto) {
     return this.billsService.batchRemove(body.ids);

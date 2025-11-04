@@ -13,9 +13,6 @@ export class Bill {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'enum', enum: ['income', 'expense'] as const })
-  type: 'income' | 'expense'; // 标签类型，收入 or 支出
-
   @Column('float')
   price: number; // 金额
 

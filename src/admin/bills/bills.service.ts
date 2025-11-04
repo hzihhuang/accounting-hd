@@ -61,7 +61,7 @@ export class BillsService {
 
     // 类型筛选
     if (type && type !== 'all') {
-      queryBuilder.andWhere('bill.type = :type', { type });
+      queryBuilder.andWhere('category.type = :type', { type });
     }
 
     // 分类筛选

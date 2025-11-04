@@ -20,7 +20,6 @@ export class BillsService {
 
   async findAll(userId: number, query: GetBillsDto) {
     const {
-      type = 'all',
       categoryId,
       date,
       startDate,
@@ -31,9 +30,6 @@ export class BillsService {
 
     const where: FindOptionsWhere<Bill> = { user: { id: userId } };
 
-    if (type !== 'all') {
-      where.type = type;
-    }
     if (categoryId) {
       where.category = { id: categoryId };
     }

@@ -79,14 +79,15 @@ export class WebUserService {
         // 构建账单查询条件
         const billQueryBuilder = this.billsRepository
           .createQueryBuilder('bill')
+          .leftJoin('bill.category', 'category') // 关联分类表
           .select('bill.userId', 'userId')
           .addSelect('COUNT(bill.id)', 'totalBills')
           .addSelect(
-            `SUM(CASE WHEN bill.type = 'income' THEN bill.price ELSE 0 END)`,
+            `SUM(CASE WHEN category.type = 'income' THEN bill.price ELSE 0 END)`,
             'totalIncome',
           )
           .addSelect(
-            `SUM(CASE WHEN bill.type = 'expense' THEN bill.price ELSE 0 END)`,
+            `SUM(CASE WHEN category.type = 'expense' THEN bill.price ELSE 0 END)`,
             'totalExpense',
           )
           .where('bill.userId IN (:...userIds)', { userIds });

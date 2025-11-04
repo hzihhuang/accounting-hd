@@ -83,8 +83,10 @@ export class ChartsService {
     const qb = this.billRepository
       .createQueryBuilder('bill')
       .leftJoin('bill.category', 'category')
+      .leftJoin('bill.user', 'user') // 添加用户关联
       .select('category.id', 'id')
       .addSelect('category.name', 'category')
+      .addSelect('category.type', 'type') // 添加分类类型
       .addSelect(
         `SUM(CASE WHEN category.type = 'income' THEN bill.price ELSE 0 END)`,
         'income',
@@ -94,21 +96,35 @@ export class ChartsService {
         'expense',
       );
 
-    if (userId) qb.andWhere('bill.createdById = :userId', { userId });
-    if (startDate) qb.andWhere('bill.createdAt >= :startDate', { startDate });
-    if (endDate) qb.andWhere('bill.createdAt <= :endDate', { endDate });
+    // 用户筛选
+    if (userId) qb.andWhere('user.id = :userId', { userId });
 
-    qb.groupBy('category.id').addGroupBy('category.name');
+    // 时间筛选（使用账单日期）
+    if (startDate) {
+      const start = new Date(startDate);
+      start.setHours(0, 0, 0, 0);
+      qb.andWhere('bill.date >= :startDate', { startDate: start });
+    }
+    if (endDate) {
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+      qb.andWhere('bill.date <= :endDate', { endDate: end });
+    }
+
+    qb.groupBy('category.id')
+      .addGroupBy('category.name')
+      .addGroupBy('category.type'); // 按类型分组
 
     const result = await qb.getRawMany();
 
     return result.map((r) => ({
+      id: r.id,
       category: r.category,
-      income: Number(r.income),
-      expense: Number(r.expense),
+      type: r.type, // 返回分类类型
+      income: Number(r.income) || 0,
+      expense: Number(r.expense) || 0,
     }));
   }
-
   async getCategoryCount(query: GetCategoryCountDto) {
     const { userId, startDate, endDate } = query;
 
@@ -134,19 +150,21 @@ export class ChartsService {
   }
 
   async getTrend(query: GetTrendDto) {
-    const { mode = 'day', startDate, endDate, userId } = query;
+    const { mode = 'month', startDate, endDate, userId } = query;
 
     const dateFormat =
       mode === 'year'
         ? "DATE_FORMAT(bill.createdAt, '%Y')"
         : mode === 'month'
           ? "DATE_FORMAT(bill.createdAt, '%Y-%m')"
-          : "DATE_FORMAT(bill.createdAt, '%Y-%m-%d')";
+          : mode === 'week'
+            ? "DATE_FORMAT(bill.createdAt, '%x-%v')" // 年份和周数，格式：2024-01
+            : "DATE_FORMAT(bill.createdAt, '%Y-%m-%d')";
 
     const qb = this.billRepository
       .createQueryBuilder('bill')
       .leftJoin('bill.category', 'category')
-      .select(dateFormat, 'date')
+      .select(`${dateFormat}`, 'date')
       .addSelect(
         `SUM(CASE WHEN category.type = 'income' THEN bill.price ELSE 0 END)`,
         'income',
@@ -156,18 +174,18 @@ export class ChartsService {
         'expense',
       );
 
-    if (userId) qb.andWhere('bill.createdById = :userId', { userId });
+    if (userId) qb.andWhere('bill.userId = :userId', { userId });
     if (startDate) qb.andWhere('bill.createdAt >= :startDate', { startDate });
     if (endDate) qb.andWhere('bill.createdAt <= :endDate', { endDate });
 
-    qb.groupBy('date').orderBy('date', 'ASC');
+    qb.groupBy(`${dateFormat}`).orderBy('date', 'ASC');
 
     const result = await qb.getRawMany();
 
     return result.map((r) => ({
       date: r.date,
-      income: Number(r.income),
-      expense: Number(r.expense),
+      income: Number(r.income) || 0,
+      expense: Number(r.expense) || 0,
     }));
   }
 }
