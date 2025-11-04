@@ -225,4 +225,8 @@ export class WebUserService {
 
     return await this.userRepository.remove(user);
   }
+
+  async batchRemove(ids: number[]) {
+    return await this.userRepository.delete({ id: In(ids) });
+  }
 }

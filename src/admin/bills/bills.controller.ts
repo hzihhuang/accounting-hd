@@ -13,12 +13,16 @@ import { CreateBillDto } from './dto/create-bill.dto';
 import { GetBillsDto } from './dto/get-bills.dto';
 import { UpdateBillDto } from './dto/update-bill.dto';
 import { AdminController } from '@/admin/AdminController';
+import { Roles } from '../decorators/roles.decorator';
+import { Role } from '../enums/role.enum';
+import { BatchDeleteBillDto, DeleteBillDto } from './dto/remove-bill.dto';
 
 @AdminController('bills')
 export class BillsController {
   constructor(private readonly billsService: BillsService) {}
 
   @Post()
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   async create(@Body() createBillDto: CreateBillDto) {
     return this.billsService.create(createBillDto);
   }
@@ -28,12 +32,8 @@ export class BillsController {
     return this.billsService.findAll(query);
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: number) {
-    return this.billsService.remove(id);
-  }
-
   @Put(':id')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateBillDto: UpdateBillDto,
@@ -41,9 +41,15 @@ export class BillsController {
     return this.billsService.update(id, updateBillDto);
   }
 
-  // // 批量删除
-  // @Delete('batch')
-  // async batchRemove(@Body('ids') ids: number[]) {
-  //   return this.billsService.batchRemove(ids);
-  // }
+  @Delete(':id')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+  async remove(@Param() params: DeleteBillDto) {
+    return this.billsService.remove(params.id);
+  }
+
+  @Delete('batch')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+  async batchRemove(@Body() body: BatchDeleteBillDto) {
+    return this.billsService.batchRemove(body.ids);
+  }
 }

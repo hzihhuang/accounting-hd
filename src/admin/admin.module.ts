@@ -7,6 +7,7 @@ import { BillsModule } from '@/admin/bills/bills.module';
 import { JwtAuthGuard } from '@/admin/guards/jwt-auth.guard';
 import { RolesGuard } from '@/admin/guards/roles.guard';
 import { WebUserModule } from '@/admin/user_web/user.module';
+import { ChartsModule } from '@/admin/charts/charts.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { WebUserModule } from '@/admin/user_web/user.module';
     CategoryModule,
     BillsModule,
     WebUserModule,
+    ChartsModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },

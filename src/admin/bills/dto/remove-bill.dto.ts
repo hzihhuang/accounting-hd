@@ -1,14 +1,14 @@
 import { Transform, Type } from 'class-transformer';
 import {
-  IsInt,
-  IsPositive,
   IsArray,
+  IsInt,
+  ArrayNotEmpty,
   ArrayMinSize,
   IsNotEmpty,
-  ArrayNotEmpty,
+  IsPositive,
 } from 'class-validator';
 
-export class RemoveCategoryDto {
+export class DeleteBillDto {
   @Type(() => Number)
   @IsInt({ message: 'id 必须是整数' })
   @IsPositive({ message: 'ID必须是正数' })
@@ -16,7 +16,7 @@ export class RemoveCategoryDto {
   id: number;
 }
 
-export class BatchRemoveCategoryDto {
+export class BatchDeleteBillDto {
   @Transform(({ value }) => {
     if (Array.isArray(value)) {
       return value.map((v) => Number(v)); // 手动转换每个元素
@@ -24,7 +24,7 @@ export class BatchRemoveCategoryDto {
     return value as number[];
   })
   @IsArray({ message: 'ID列表必须是数组' })
-  @ArrayMinSize(1, { message: '至少选择一个标签删除' })
+  @ArrayMinSize(1, { message: '至少选择一个账单删除' })
   @ArrayNotEmpty({ message: 'ids 数组不能为空' })
   @IsInt({ each: true, message: '每个ID都必须是整数' })
   @IsPositive({ each: true, message: '每个ID都必须是正数' })

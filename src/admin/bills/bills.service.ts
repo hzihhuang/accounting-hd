@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Bill } from '@/web/bills/entities/bill.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateBillDto } from './dto/create-bill.dto';
 import { GetBillsDto } from './dto/get-bills.dto';
 import { UpdateBillDto } from './dto/update-bill.dto';
@@ -210,5 +210,14 @@ export class BillsService {
 
     // 使用 save 方法保存，这会自动处理关联关系
     return this.billsRepository.save(bill);
+  }
+
+  async batchRemove(ids: number[]) {
+    if (!ids || ids.length === 0) {
+      return { deleted: 0 };
+    }
+
+    const result = await this.billsRepository.delete({ id: In(ids) });
+    return result;
   }
 }

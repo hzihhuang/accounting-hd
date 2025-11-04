@@ -17,7 +17,7 @@ import {
   RemoveCategoryDto,
 } from './dto/remove-category.dto';
 import { AdminController } from '@/admin/AdminController';
-import { User } from '@/admin/decorators/User.decorator';
+import { User } from '@/admin/decorators/user.decorator';
 import { Roles } from '@/admin/decorators/roles.decorator';
 import { Role } from '@/admin/enums/role.enum';
 
