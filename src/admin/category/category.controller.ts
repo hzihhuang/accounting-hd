@@ -1,5 +1,6 @@
 import {
   Body,
+  Controller,
   Delete,
   Get,
   Param,
@@ -16,12 +17,11 @@ import {
   BatchRemoveCategoryDto,
   RemoveCategoryDto,
 } from './dto/remove-category.dto';
-import { AdminController } from '@/admin/AdminController';
 import { User } from '@/admin/decorators/user.decorator';
 import { Roles } from '@/admin/decorators/roles.decorator';
 import { Role } from '@/admin/enums/role.enum';
 
-@AdminController('category')
+@Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 

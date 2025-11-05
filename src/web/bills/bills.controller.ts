@@ -7,16 +7,16 @@ import {
   Post,
   Param,
   ParseIntPipe,
+  Controller,
 } from '@nestjs/common';
 import { BillsService } from './bills.service';
 import { User } from '@/web/decorators/getUser.decorator';
-import { WebController } from '@/web/WebController';
 import { GetBillsDto } from './dto/get-bills.dto';
 import { CreateBillDto } from './dto/create-bill.dto';
 import { DeleteBillDto } from './dto/delete-bill.dto';
 import { UpdateBillDto } from './dto/update-bill-dto';
 
-@WebController('bills')
+@Controller('bills')
 export class BillsController {
   constructor(private readonly billsService: BillsService) {}
 
@@ -42,5 +42,10 @@ export class BillsController {
     @User('id') userId: number,
   ) {
     return this.billsService.put(id, updateBillDto, userId);
+  }
+
+  @Get('dates')
+  async getDates(@User('id') id: number) {
+    return this.billsService.getDates(id);
   }
 }

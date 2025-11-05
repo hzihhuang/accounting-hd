@@ -22,7 +22,7 @@ export class BillsService {
   ) {}
 
   async findAll(getBillsDto: GetBillsDto, userId: number) {
-    const { page = 1, pageSize = 10, type, startDate, endDate } = getBillsDto;
+    const { type, startDate, endDate } = getBillsDto;
 
     const query = this.billRepository
       .createQueryBuilder('bill')
@@ -49,17 +49,10 @@ export class BillsService {
     // ✅ 按账单日期排序（最新在前）
     query.orderBy('bill.date', 'DESC');
 
-    // ✅ 分页
-    query.skip((page - 1) * pageSize).take(pageSize);
-
     const [list, total] = await query.getManyAndCount();
-
     return {
       list,
       total,
-      pageSize,
-      currentPage: page,
-      totalPages: Math.ceil(total / pageSize),
     };
   }
 
@@ -155,5 +148,17 @@ export class BillsService {
       where: { id },
       relations: ['category'],
     });
+  }
+
+  async getDates(id: number) {
+    const dates = await this.billRepository
+      .createQueryBuilder('bill')
+      .select("DATE_FORMAT(bill.date, '%Y-%m-%d')", 'date')
+      .where('bill.userId = :userId', { userId: id })
+      .distinct(true)
+      .orderBy('date', 'DESC')
+      .getRawMany();
+
+    return dates.map((item) => item.date as string);
   }
 }

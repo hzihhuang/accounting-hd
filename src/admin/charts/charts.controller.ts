@@ -1,12 +1,11 @@
-import { Get, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ChartsService } from './charts.service';
 import { GetCategoryDto } from './dto/get-category.dto';
 import { GetTrendDto } from './dto/get-trend.dto';
 import { GetCategoryCountDto } from './dto/get-category-count.dto';
 import { GetDashboardDto } from './dto/get-dashboard.dto';
-import { AdminController } from '@/admin/AdminController';
 
-@AdminController('charts')
+@Controller('charts')
 export class ChartsController {
   constructor(private readonly chartsService: ChartsService) {}
 

@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Body,
+  Controller,
   Post,
   Req,
   UploadedFile,
@@ -10,9 +11,8 @@ import { UploadService } from './upload.service';
 import { extname } from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { existsSync, mkdirSync, renameSync } from 'fs';
-import { AdminController } from '@/admin/AdminController';
 
-@AdminController('upload')
+@Controller('upload')
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 

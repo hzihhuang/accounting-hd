@@ -1,5 +1,6 @@
 import {
   Body,
+  Controller,
   Delete,
   Get,
   Param,
@@ -9,7 +10,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { WebUserService } from './user.service';
-import { AdminController } from '@/admin/AdminController';
 import { GetUsersDto } from './dto/get-user-web.dto';
 import { UpdateUserStatusDto } from './dto/update-status.dto';
 import { CreateUserDto } from './dto/create-user-web.dto';
@@ -18,7 +18,7 @@ import { Roles } from '../decorators/roles.decorator';
 import { Role } from '../enums/role.enum';
 import { UpdateUserPasswordDto } from './dto/update-password.dto';
 
-@AdminController('web-user')
+@Controller('web-user')
 export class WebUserController {
   constructor(private readonly userService: WebUserService) {}
 

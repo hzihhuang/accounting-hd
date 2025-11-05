@@ -27,7 +27,7 @@ export class UserService {
 
   // 生成 token
   async generateToken(user: User) {
-    const payload = { username: user.username, sub: user.id };
+    const payload = { id: user.id, tokenVersion: user.tokenVersion };
     return this.jwtService.sign(payload);
   }
 

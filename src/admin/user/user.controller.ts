@@ -1,15 +1,22 @@
-import { BadRequestException, Body, Get, Post, Req, Res } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from '@/admin/decorators/user.decorator';
 import { Response } from 'express';
 import { UpdatePasswordDto } from '@/admin/user/dto/update-password.dto';
-import { AdminController } from '@/admin/AdminController';
 import { CreateAdminUserDto } from '@/admin/user/dto/create-admin-user.dto';
 import { Public } from '@/admin/decorators/public.decorator';
 import { Roles } from '@/admin/decorators/roles.decorator';
 import { Role } from '@/admin/enums/role.enum';
 
-@AdminController('user')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

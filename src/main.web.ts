@@ -1,13 +1,13 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ResponseInterceptor } from './response.interceptor';
 import { HttpExceptionFilter } from './http-exception.filter';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { WebModule } from '@/web/web.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(WebModule);
 
   /** 静态 */
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
@@ -34,7 +34,7 @@ async function bootstrap() {
     credentials: true,
   });
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(3001);
 }
 
 bootstrap();

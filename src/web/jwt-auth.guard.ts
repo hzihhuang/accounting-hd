@@ -39,6 +39,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       where: { id: user.id },
       select: ['id', 'tokenVersion'],
     });
+
     if (!dbUser || dbUser.tokenVersion !== user.tokenVersion) {
       throw new UnauthorizedException('登录状态已失效，请重新登录');
     }

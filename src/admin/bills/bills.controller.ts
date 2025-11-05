@@ -7,17 +7,17 @@ import {
   Query,
   Put,
   ParseIntPipe,
+  Controller,
 } from '@nestjs/common';
 import { BillsService } from './bills.service';
 import { CreateBillDto } from './dto/create-bill.dto';
 import { GetBillsDto } from './dto/get-bills.dto';
 import { UpdateBillDto } from './dto/update-bill.dto';
-import { AdminController } from '@/admin/AdminController';
 import { Roles } from '../decorators/roles.decorator';
 import { Role } from '../enums/role.enum';
 import { BatchDeleteBillDto, DeleteBillDto } from './dto/remove-bill.dto';
 
-@AdminController('bills')
+@Controller('bills')
 export class BillsController {
   constructor(private readonly billsService: BillsService) {}
 
