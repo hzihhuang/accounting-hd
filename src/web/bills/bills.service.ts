@@ -1,133 +1,159 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Bill } from './entities/bill.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  Between,
-  FindOptionsWhere,
-  LessThanOrEqual,
-  MoreThanOrEqual,
-  Repository,
-} from 'typeorm';
+import { Repository } from 'typeorm';
 import { GetBillsDto } from './dto/get-bills.dto';
-import { PatchBillDto } from './dto/patch-bill-dto';
+import { CreateBillDto } from './dto/create-bill.dto';
+import { Category } from '@/admin/category/entities/category.entity';
+import { DeleteBillDto } from './dto/delete-bill.dto';
+import { UpdateBillDto } from './dto/update-bill-dto';
 
 @Injectable()
 export class BillsService {
   constructor(
     @InjectRepository(Bill)
-    private readonly billsRepository: Repository<Bill>,
+    private readonly billRepository: Repository<Bill>,
+    @InjectRepository(Category)
+    private readonly categoryRepository: Repository<Category>,
   ) {}
 
-  async findAll(userId: number, query: GetBillsDto) {
-    const {
-      categoryId,
-      date,
-      startDate,
-      endDate,
-      page = 1,
-      pageSize = 10,
-    } = query;
+  async findAll(getBillsDto: GetBillsDto, userId: number) {
+    const { page = 1, pageSize = 10, type, startDate, endDate } = getBillsDto;
 
-    const where: FindOptionsWhere<Bill> = { user: { id: userId } };
+    const query = this.billRepository
+      .createQueryBuilder('bill')
+      .leftJoinAndSelect('bill.category', 'category')
+      .where('bill.userId = :userId', { userId });
 
-    if (categoryId) {
-      where.category = { id: categoryId };
-    }
-    if (startDate || endDate) {
-      // 优先使用 startDate 和 endDate 进行范围查询
-      let start: Date | undefined, end: Date | undefined;
-
-      if (startDate) {
-        start = new Date(startDate);
-        start.setHours(0, 0, 0, 0);
-      }
-
-      if (endDate) {
-        end = new Date(endDate);
-        end.setHours(23, 59, 59, 999);
-      }
-
-      if (start && end) {
-        where.createdAt = Between(start, end);
-      } else if (start) {
-        where.createdAt = MoreThanOrEqual(start);
-      } else if (end) {
-        where.createdAt = LessThanOrEqual(end);
-      }
-    } else if (date) {
-      // 仅在 startDate 和 endDate 不存在时，才使用 date
-      let start: Date, end: Date;
-
-      if (/^\d{4}$/.test(date)) {
-        // 识别 YYYY（查询整年）
-        start = new Date(`${date}-01-01`);
-        end = new Date(`${date}-12-31`);
-      } else if (/^\d{4}-\d{2}$/.test(date)) {
-        // 识别 YYYY-MM（查询整月）
-        start = new Date(`${date}-01`);
-        end = new Date(start);
-        end.setMonth(end.getMonth() + 1, 0); // 该月最后一天
-      } else if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-        // 识别 YYYY-MM-DD（查询当天）
-        start = new Date(date);
-        end = new Date(date);
-      } else {
-        throw new Error('日期格式无效。使用YYYY、YYYY-MM或YYYY-MM-DD。');
-      }
-      // 设置时间范围
-      start.setHours(0, 0, 0, 0);
-      end.setHours(23, 59, 59, 999);
-      where.date = Between(start, end);
+    // ✅ 按类型筛选（income / expense）
+    if (type) {
+      query.andWhere('category.type = :type', { type });
     }
 
-    const skip = pageSize > 0 ? (page - 1) * pageSize : undefined;
-    const take = pageSize > 0 ? pageSize : undefined;
+    // ✅ 按日期范围筛选
+    if (startDate && endDate) {
+      query.andWhere('bill.date BETWEEN :start AND :end', {
+        start: startDate,
+        end: endDate,
+      });
+    } else if (startDate) {
+      query.andWhere('bill.date >= :start', { start: startDate });
+    } else if (endDate) {
+      query.andWhere('bill.date <= :end', { end: endDate });
+    }
 
-    const [list, total] = await this.billsRepository.findAndCount({
-      where,
-      order: { createdAt: 'DESC' },
-      skip,
-      take,
-      relations: ['tag'],
-    });
+    // ✅ 按账单日期排序（最新在前）
+    query.orderBy('bill.date', 'DESC');
+
+    // ✅ 分页
+    query.skip((page - 1) * pageSize).take(pageSize);
+
+    const [list, total] = await query.getManyAndCount();
 
     return {
       list,
       total,
-      totalPages: pageSize > 0 ? Math.ceil(total / pageSize) : 1,
-      page,
       pageSize,
+      currentPage: page,
+      totalPages: Math.ceil(total / pageSize),
     };
   }
 
-  async remove(userId: number, billId: number) {
-    const bill = await this.billsRepository.findOne({
-      where: { id: billId, user: { id: userId } },
+  async create(createBillDto: CreateBillDto, userId: number) {
+    const { categoryId, price, remark, date } = createBillDto;
+
+    // 检查分类是否存在
+    const category = await this.categoryRepository.findOne({
+      where: { id: categoryId },
+    });
+    if (!category) {
+      throw new NotFoundException('分类不存在');
+    }
+
+    // 生成账单实例
+    const bill = this.billRepository.create({
+      price,
+      remark,
+      date:
+        date ||
+        new Date()
+          .toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+          })
+          .replace(/\//g, '-'),
+      category,
+      user: { id: userId } as any, // 简化写法，避免额外查用户
+    });
+
+    // 保存到账单表
+    const savedBill = await this.billRepository.save(bill);
+
+    return savedBill;
+  }
+
+  async remove(deleteBillDto: DeleteBillDto, userId: number) {
+    const { id } = deleteBillDto;
+    // 查找账单
+    const bill = await this.billRepository.findOne({
+      where: { id },
+      relations: ['user'],
     });
     if (!bill) {
       throw new NotFoundException('账单不存在');
     }
-    return this.billsRepository.remove(bill);
+
+    // 确保只能删除自己的账单
+    if (bill.user.id !== userId) {
+      throw new ForbiddenException('无权删除该账单');
+    }
+
+    return await this.billRepository.remove(bill);
   }
 
-  async patch(userId: number, billId: number, updateBillDto: PatchBillDto) {
-    const bill = await this.billsRepository.findOne({
-      where: { id: billId, user: { id: userId } },
+  async put(id: number, updateBillDto: UpdateBillDto, userId: number) {
+    const { categoryId, price, remark, date } = updateBillDto;
+
+    // 1️⃣ 查找账单
+    const bill = await this.billRepository.findOne({
+      where: { id },
+      relations: ['user', 'category'],
     });
+
     if (!bill) {
       throw new NotFoundException('账单不存在');
     }
-    return this.billsRepository.save(Object.assign(bill, updateBillDto));
-  }
 
-  // 获取存在账单记录的日期列表 YYYY MM DD
-  async getDates(userId: number) {
-    const dates = await this.billsRepository
-      .createQueryBuilder('bills')
-      .select('bills.date')
-      .where({ user: { id: userId } })
-      .distinct(true)
-      .getMany();
-    return dates.map((item) => item.date);
+    // 2️⃣ 校验账单归属
+    if (bill.user.id !== userId) {
+      throw new ForbiddenException('无权修改该账单');
+    }
+
+    // 3️⃣ 检查分类是否存在
+    const category = await this.categoryRepository.findOne({
+      where: { id: categoryId },
+    });
+    if (!category) {
+      throw new NotFoundException('分类不存在');
+    }
+
+    // 4️⃣ 更新账单字段
+    bill.category = category;
+    bill.price = price;
+    bill.remark = remark ?? bill.remark;
+    bill.date = date || bill.date; // ✅ 确保日期格式为 YYYY-MM-DD，不做 new Date 转换
+
+    // 5️⃣ 保存并返回更新后的账单（包含分类）
+    await this.billRepository.save(bill);
+
+    return this.billRepository.findOne({
+      where: { id },
+      relations: ['category'],
+    });
   }
 }

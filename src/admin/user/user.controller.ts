@@ -6,13 +6,15 @@ import { UpdatePasswordDto } from '@/admin/user/dto/update-password.dto';
 import { AdminController } from '@/admin/AdminController';
 import { CreateAdminUserDto } from '@/admin/user/dto/create-admin-user.dto';
 import { Public } from '@/admin/decorators/public.decorator';
+import { Roles } from '@/admin/decorators/roles.decorator';
+import { Role } from '@/admin/enums/role.enum';
 
 @AdminController('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Public()
   @Post('register')
+  @Roles(Role.SUPER_ADMIN)
   async register(@Body() body: CreateAdminUserDto) {
     if (!body) throw new BadRequestException('请求参数错误');
     const user = await this.userService.register(body);

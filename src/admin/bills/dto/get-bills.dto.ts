@@ -29,7 +29,7 @@ export class GetBillsDto {
   @IsEnum(['income', 'expense'], {
     message: '账单类型必须是 income 或 expense',
   })
-  type?: 'all' | 'income' | 'expense';
+  type?: 'income' | 'expense';
 
   @IsOptional()
   @IsString({ message: '关键词必须是字符串' })

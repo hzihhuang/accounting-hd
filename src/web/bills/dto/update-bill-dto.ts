@@ -1,15 +1,15 @@
 import { Type } from 'class-transformer';
 import {
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  Min,
-  MaxLength,
   IsOptional,
+  IsNumber,
+  Min,
+  IsString,
+  MaxLength,
   IsDateString,
+  IsNotEmpty,
 } from 'class-validator';
 
-export class CreateBillDto {
+export class UpdateBillDto {
   @IsNumber()
   @Type(() => Number)
   @IsNotEmpty({ message: '标签Id不能为空' })
@@ -22,7 +22,7 @@ export class CreateBillDto {
 
   @IsOptional()
   @IsDateString({}, { message: '日期格式无效，正确格式: YYYY-MM-DD' })
-  date: string;
+  date: Date;
 
   @IsString()
   @IsOptional()

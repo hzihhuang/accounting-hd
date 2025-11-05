@@ -13,7 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: 'hzihhuang', // 必须和 `JwtModule` 里的 secret 一致
+      secretOrKey: 'hzihhuang-admin', // 必须和 `JwtModule` 里的 secret 一致
     });
   }
 

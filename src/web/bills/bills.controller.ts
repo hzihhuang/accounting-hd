@@ -1,38 +1,40 @@
-import { Get, Body, Param, Delete, Query, Patch } from '@nestjs/common';
+import { Get, Body, Delete, Query, Put, Post, Param, ParseIntPipe } from '@nestjs/common';
 import { BillsService } from './bills.service';
 import { GetUser } from '@/web/decorators/getUser.decorator';
-import { GetBillsDto } from './dto/get-bills.dto';
-import { PatchBillDto } from './dto/patch-bill-dto';
 import { WebController } from '@/web/WebController';
+import { GetBillsDto } from './dto/get-bills.dto';
+import { CreateBillDto } from './dto/create-bill.dto';
+import { DeleteBillDto } from './dto/delete-bill.dto';
+import { UpdateBillDto } from './dto/update-bill-dto';
 
 @WebController('bills')
 export class BillsController {
   constructor(private readonly billsService: BillsService) {}
 
   @Get()
-  async findAll(
-    @GetUser('userId') userId: number,
-    @Query() query: GetBillsDto,
+  async findAll(@Query() getBillsDto: GetBillsDto, @GetUser('id') id: number) {
+    return this.billsService.findAll(getBillsDto, id);
+  }
+
+  @Post()
+  async create(
+    @Body() createBillDto: CreateBillDto,
+    @GetUser('id') id: number,
   ) {
-    return this.billsService.findAll(userId, query);
+    return this.billsService.create(createBillDto, id);
   }
 
   @Delete(':id')
-  async remove(@GetUser('userId') userId: number, @Param('id') id: number) {
-    return this.billsService.remove(userId, id);
+  async remove(@Param() params: DeleteBillDto, @GetUser('id') id: number) {
+    return this.billsService.remove(params, id);
   }
 
-  @Patch(':id')
-  async patch(
-    @GetUser('userId') userId: number,
-    @Param('id') id: number,
-    @Body() updateBillDto: PatchBillDto,
+  @Put(':id')
+  async put(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateBillDto: UpdateBillDto,
+    @GetUser('id') userId: number,
   ) {
-    return this.billsService.patch(userId, id, updateBillDto);
-  }
-
-  @Get('dates')
-  async getDates(@GetUser('userId') userId: number) {
-    return this.billsService.getDates(userId);
+    return this.billsService.put(id, updateBillDto, userId);
   }
 }

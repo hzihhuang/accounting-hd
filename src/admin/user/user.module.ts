@@ -13,7 +13,7 @@ import { AdminRole } from '@/admin/user/entities/role.entity';
     TypeOrmModule.forFeature([AdminUser, AdminRole]),
     PassportModule,
     JwtModule.register({
-      secret: 'hzihhuang',
+      secret: 'hzihhuang-admin',
       signOptions: { expiresIn: '7d' }, //7天
     }),
   ],

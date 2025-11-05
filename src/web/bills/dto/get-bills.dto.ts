@@ -1,56 +1,40 @@
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import {
-  IsNumber,
-  Min,
+  IsString,
+  MaxLength,
   IsOptional,
+  IsInt,
+  Min,
+  Max,
+  IsEnum,
   IsDateString,
-  Matches,
 } from 'class-validator';
 
 export class GetBillsDto {
-  // 标签 ID
   @IsOptional()
-  @IsNumber()
   @Type(() => Number)
-  @Transform(({ value }) => (value ? parseInt(value, 10) : undefined)) // 允许数字字符串
-  categoryId?: number;
+  @IsInt({ message: '页码必须是整数' })
+  @Min(1, { message: '页码最小为1' })
+  page?: number = 1;
 
   @IsOptional()
-  @Matches(/^\d{4}(-\d{2}(-\d{2})?)?$/, {
-    message: '日期格式无效。使用YYYY、YYYY-MM或YYYY-MM-DD。',
+  @Type(() => Number)
+  @IsInt({ message: '每页条数必须是整数' })
+  @Min(1, { message: '每页条数最小为1' })
+  @Max(100, { message: '每页条数最大为100' })
+  pageSize?: number = 10;
+
+  @IsOptional()
+  @IsEnum(['income', 'expense'], {
+    message: '账单类型必须是 income 或 expense',
   })
-  @IsDateString()
-  date?: string;
+  type?: 'income' | 'expense';
 
-  // 开始日期
   @IsOptional()
-  @IsDateString()
+  @IsDateString({}, { message: '开始日期格式无效，正确格式: YYYY-MM-DD' })
   startDate?: string;
 
-  // 结束日期
   @IsOptional()
-  @IsDateString()
+  @IsDateString({}, { message: '结束日期格式无效，正确格式: YYYY-MM-DD' })
   endDate?: string;
-
-  // 第几页（默认 1）
-  @IsOptional()
-  @IsNumber()
-  @Min(1)
-  @Type(() => Number)
-  @Transform(({ value }) => {
-    const parsed = parseInt(value, 10);
-    return isNaN(parsed) || parsed < 1 ? 1 : parsed;
-  })
-  page: number = 1;
-
-  // 每页条数（默认 0 代表全部）
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  @Type(() => Number)
-  @Transform(({ value }) => {
-    const parsed = parseInt(value, 10);
-    return isNaN(parsed) ? 0 : parsed;
-  })
-  pageSize: number = 0;
 }

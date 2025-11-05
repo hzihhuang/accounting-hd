@@ -60,7 +60,7 @@ export class BillsService {
       .leftJoinAndSelect('bill.user', 'user');
 
     // 类型筛选
-    if (type && type !== 'all') {
+    if (type) {
       queryBuilder.andWhere('category.type = :type', { type });
     }
 
