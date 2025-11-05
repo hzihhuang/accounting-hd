@@ -39,6 +39,9 @@ export class User {
   @OneToMany(() => Bill, (bill) => bill.user, { cascade: true })
   bills: Bill[];
 
+  @Column({ name: 'token_version', default: 1 })
+  tokenVersion: number;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

@@ -12,6 +12,7 @@ import { Bill } from '@/web/bills/entities/bill.entity';
 import { UpdateUserStatusDto } from './dto/update-status.dto';
 import { CreateUserDto } from './dto/create-user-web.dto';
 import * as bcrypt from 'bcryptjs';
+import { UpdateUserPasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class WebUserService {
@@ -162,6 +163,31 @@ export class WebUserService {
     }
 
     return await this.userRepository.update(id, { status });
+  }
+
+  async updatePassword(id: number, updatePasswordDto: UpdateUserPasswordDto) {
+    const { newPassword, oldPassword } = updatePasswordDto;
+    // 1️⃣ 查找用户（必须取出密码字段）
+    const user = await this.userRepository.findOne({
+      where: { id },
+      select: ['id', 'password'],
+    });
+    if (!user) {
+      throw new NotFoundException(`用户 ID ${id} 不存在`);
+    }
+    // 2️⃣ 校验旧密码是否正确
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      throw new BadRequestException('旧密码错误');
+    }
+    // 3️⃣ 加密新密码
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    // 4️⃣ 更新数据库
+    await this.userRepository.update(id, {
+      password: hashedPassword,
+      tokenVersion: () => 'token_version + 1',
+    });
+    return '密码修改成功';
   }
 
   async create(createUserDto: CreateUserDto) {

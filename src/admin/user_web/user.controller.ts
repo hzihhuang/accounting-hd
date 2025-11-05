@@ -16,6 +16,7 @@ import { CreateUserDto } from './dto/create-user-web.dto';
 import { BatchRemoveUserDto, RemoveUserDto } from './dto/delete-user-web.dto';
 import { Roles } from '../decorators/roles.decorator';
 import { Role } from '../enums/role.enum';
+import { UpdateUserPasswordDto } from './dto/update-password.dto';
 
 @AdminController('web-user')
 export class WebUserController {
@@ -34,6 +35,15 @@ export class WebUserController {
     @Body() updateStatusDto: UpdateUserStatusDto,
   ) {
     return this.userService.updateStatus(id, updateStatusDto);
+  }
+
+  @Patch(':id')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+  async updatePassword(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserPasswordDto: UpdateUserPasswordDto,
+  ) {
+    return this.userService.updatePassword(id, updateUserPasswordDto);
   }
 
   // 新增用户

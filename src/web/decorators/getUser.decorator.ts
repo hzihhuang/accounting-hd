@@ -1,11 +1,21 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
+export interface IUser {
+  id: number;
+  tokenVersion: number;
+}
+
 /**
  * @description: 获取用户信息
  */
-export const GetUser = createParamDecorator(
-  (data: keyof any, ctx: ExecutionContext) => {
+export const User = createParamDecorator(
+  <K extends keyof IUser>(
+    data: K | undefined,
+    ctx: ExecutionContext,
+  ): IUser[K] | IUser => {
     const request = ctx.switchToHttp().getRequest();
-    return data ? request.user?.[data] : request.user;
+    const user = request.user as IUser;
+
+    return data ? user?.[data] : user;
   },
 );
