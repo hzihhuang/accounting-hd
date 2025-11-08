@@ -13,6 +13,7 @@ import { Category } from '@/admin/category/entities/category.entity';
 import { AdminUser } from '../admin/user/entities/user.entity';
 import { AdminRole } from '../admin/user/entities/role.entity';
 import { AdminPermission } from '../admin/user/entities/permission.entity';
+import { HomeModule } from './home/home.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AdminPermission } from '../admin/user/entities/permission.entity';
     BillsModule,
     CategoryModule,
     ChartsModule,
+    HomeModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
